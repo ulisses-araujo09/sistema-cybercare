@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CyberCare">
+  <rect width="512" height="512" rx="112" fill="#073F39"/>
+  <path d="M256 96C214 128 167 146 124 148V264C124 337 183 389 256 420C329 389 388 337 388 264V148C345 146 298 128 256 96Z" fill="#E84B18"/>
+  <path d="M256 132C220 157 185 170 159 174V264C159 318 199 358 256 384C313 358 353 318 353 264V174C327 170 292 157 256 132Z" fill="#073F39"/>
+  <path d="M205 258L242 295L313 220" fill="none" stroke="#FFF8EF" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

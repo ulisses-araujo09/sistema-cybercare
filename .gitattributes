@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.zip binary
+# Preservar integralmente os bytes dos materiais originais fornecidos.
+CyberCare_Codex/** -text

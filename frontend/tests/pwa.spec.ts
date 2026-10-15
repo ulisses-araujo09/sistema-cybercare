@@ -1,0 +1,72 @@
+import { test, expect } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+test.use({ baseURL: 'http://127.0.0.1:4173' })
+
+test('manifest, ícones e critérios de instalação PWA no build real', async ({ page, request }, info) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.goto('/')
+  const manifestUrl = await page.locator('link[rel="manifest"]').getAttribute('href')
+  expect(manifestUrl).toBeTruthy()
+  const manifest = await (await request.get(manifestUrl!)).json()
+  expect(manifest.short_name).toBe('CyberCare')
+  expect(manifest.lang).toBe('pt-BR')
+  expect(manifest.display).toBe('standalone')
+  expect(manifest.scope).toBe('/')
+  for (const icon of manifest.icons) {
+    const response = await request.get(icon.src)
+    expect(response.status()).toBe(200)
+    const png = await response.body()
+    const [width, height] = icon.sizes.split('x').map(Number)
+    expect(png.readUInt32BE(16)).toBe(width)
+    expect(png.readUInt32BE(20)).toBe(height)
+  }
+  await page.evaluate(async () => { await navigator.serviceWorker.ready })
+  await page.reload()
+  await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBeTruthy()
+  const cdp = await page.context().newCDPSession(page)
+  const installability = await cdp.send('Page.getInstallabilityErrors')
+  expect(installability.installabilityErrors).toEqual([])
+  await page.getByRole('button', { name: 'Instalar app', exact: true }).click()
+  // O navegador pode oferecer prompt nativo ou as instruções de instalação.
+  await expect(page.getByRole('button', { name: 'Instalar app', exact: true })).toBeVisible()
+  await page.screenshot({ path: `../docs/validacao/pwa-${info.project.name}.png`, fullPage: true })
+  expect(errors).toEqual([])
+})
+
+test('service worker não armazena API, sessões, relatos ou chaves; offline seguro', async ({ page }) => {
+  const env = readFileSync('../backend/.env', 'utf8')
+  const password = env.match(/^DEMO_MANAGER_PASSWORD=(.+)$/m)?.[1].trim()
+  expect(password).toBeTruthy()
+  await page.goto('/')
+  await page.evaluate(async () => { await navigator.serviceWorker.ready })
+  await page.reload()
+  await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBeTruthy()
+  const receipt = await page.evaluate(async () => {
+    const response = await fetch('/api/reports', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: 'outros', description: 'Caso totalmente fictício para teste de privacidade da PWA.', fictitious_confirmation: true }) })
+    if (!response.ok) throw new Error('O teste não conseguiu criar o caso fictício.')
+    return response.json()
+  })
+  await page.evaluate(async ({ protocol, secret }) => {
+    await fetch('/api/reports/lookup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ protocol, secret }) })
+  }, receipt)
+  await page.getByRole('link', { name: 'Acesso da escola', exact: true }).click()
+  await page.getByLabel('E-mail institucional').fill('gestao@demo.cybercare.local')
+  await page.getByLabel('Senha', { exact: true }).fill(password!)
+  await page.getByRole('button', { name: 'Entrar no painel' }).click()
+  await expect(page.getByText('Registros fictícios no período')).toBeVisible()
+  const cacheUrls = await page.evaluate(async () => {
+    const names = await caches.keys()
+    return (await Promise.all(names.map(async name => (await (await caches.open(name)).keys()).map(request => new URL(request.url).pathname)))).flat()
+  })
+  expect(cacheUrls.length).toBeGreaterThan(0)
+  expect(cacheUrls.some(url => /^\/(api|login|gestao|socioemocional|protocolo|acompanhar)(\/|$)/.test(url))).toBeFalsy()
+  expect(cacheUrls.some(url => url === '/' || url === '/index.html')).toBeFalsy()
+  expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0)
+  await page.context().setOffline(true)
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Estamos aqui. Falta só a conexão.' })).toBeVisible()
+  await expect(page.getByText('Nenhum relato é salvo para envio posterior.', { exact: true })).toBeVisible()
+  await expect(page.locator('input')).toHaveCount(0)
+  await page.context().setOffline(false)
+})
