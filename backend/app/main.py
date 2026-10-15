@@ -1,5 +1,6 @@
 import secrets
-from contextlib import asynccontextmanager
+import asyncio
+from contextlib import asynccontextmanager, suppress
 from datetime import date, datetime, time, timedelta, timezone
 import hmac
 from fastapi import FastAPI, Depends, HTTPException, Request, Query
@@ -14,12 +15,20 @@ from .db import get_db
 from .models import User, Report, ReportEvent, AuditEvent, QuizQuestion, RevokedToken, Role, Category, Status, now
 from .schemas import ReportCreate, Lookup, Login, StatusUpdate, Answer
 from .security import secret_hash, verify_password, dummy_hash, issue_token, current_user, require_role, rate_limit, decode_token, bearer
+from .maintenance import run_retention_loop
 
 
 @asynccontextmanager
 async def lifespan(app):
     get_settings().validate_runtime()
-    yield
+    maintenance = asyncio.create_task(run_retention_loop()) if get_settings().maintenance_enabled else None
+    try:
+        yield
+    finally:
+        if maintenance:
+            maintenance.cancel()
+            with suppress(asyncio.CancelledError):
+                await maintenance
 
 
 app = FastAPI(title='CyberCare — API demonstrativa', version='1.0.0', lifespan=lifespan)

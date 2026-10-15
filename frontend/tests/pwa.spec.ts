@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
-test.use({ baseURL: 'http://127.0.0.1:4173' })
+test.use({ baseURL: process.env.CYBERCARE_E2E_PWA_URL || 'http://127.0.0.1:4173' })
+const screenshots = process.env.CYBERCARE_SCREENSHOT_DIR || '../docs/validacao'
 
 test('manifest, ícones e critérios de instalação PWA no build real', async ({ page, request }, info) => {
   const errors: string[] = []
@@ -35,21 +36,22 @@ test('manifest, ícones e critérios de instalação PWA no build real', async (
 })
 
 test('service worker não armazena API, sessões, relatos ou chaves; offline seguro', async ({ page }) => {
-  const env = readFileSync('../backend/.env', 'utf8')
-  const password = env.match(/^DEMO_MANAGER_PASSWORD=(.+)$/m)?.[1].trim()
+  const env = process.env.DEMO_MANAGER_PASSWORD ? '' : readFileSync('../backend/.env', 'utf8')
+  const password = process.env.DEMO_MANAGER_PASSWORD || env.match(/^DEMO_MANAGER_PASSWORD=(.+)$/m)?.[1].trim()
   expect(password).toBeTruthy()
   await page.goto('/')
   await page.evaluate(async () => { await navigator.serviceWorker.ready })
   await page.reload()
   await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBeTruthy()
-  const receipt = await page.evaluate(async () => {
-    const response = await fetch('/api/reports', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: 'outros', description: 'Caso totalmente fictício para teste de privacidade da PWA.', fictitious_confirmation: true }) })
+  const apiBase = process.env.CYBERCARE_E2E_API_URL || '/api'
+  const receipt = await page.evaluate(async (apiBase) => {
+    const response = await fetch(`${apiBase}/reports`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: 'outros', description: 'Caso totalmente fictício para teste de privacidade da PWA.', fictitious_confirmation: true }) })
     if (!response.ok) throw new Error('O teste não conseguiu criar o caso fictício.')
     return response.json()
-  })
-  await page.evaluate(async ({ protocol, secret }) => {
-    await fetch('/api/reports/lookup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ protocol, secret }) })
-  }, receipt)
+  }, apiBase)
+  await page.evaluate(async ({ protocol, secret, apiBase }) => {
+    await fetch(`${apiBase}/reports/lookup`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ protocol, secret }) })
+  }, { ...receipt, apiBase })
   await page.getByRole('link', { name: 'Acesso da escola', exact: true }).click()
   await page.getByLabel('E-mail institucional').fill('gestao@demo.cybercare.local')
   await page.getByLabel('Senha', { exact: true }).fill(password!)

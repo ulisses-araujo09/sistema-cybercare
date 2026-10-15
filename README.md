@@ -4,6 +4,8 @@ Sistema educacional em português brasileiro para prevenção e acompanhamento d
 
 **Repositório oficial:** [ulisses-araujo09/sistema-cybercare](https://github.com/ulisses-araujo09/sistema-cybercare). **Cópia sincronizada:** [ulissesoliveiraa/CYBERCARE](https://github.com/ulissesoliveiraa/CYBERCARE).
 
+**Aplicativo hospedado:** https://cybercare-web-production.up.railway.app • **API:** https://cybercare-api-production.up.railway.app/api/health
+
 **Somente dados fictícios. Não utilizar para denúncias reais.** O servidor recusa inicialização com `DEMO_MODE=false`. Essa proteção identifica o ambiente; não detecta automaticamente se um texto contém informações reais. Nenhum usuário deve inserir dados de estudantes.
 
 ## Entregas
@@ -79,7 +81,7 @@ A versão atual do Railway usa `.railway/railway.ts`; os antigos `railway.json` 
 4. Serviço frontend: Root Directory `/frontend`. Configure `VITE_API_URL=https://DOMINIO-API` **antes do build**, sem barra final. O Dockerfile recusa build sem URL HTTPS da API, faz o build PWA e serve SPA pelo Nginx, respeitando `PORT` do Railway. Gere domínio HTTPS.
 5. Atualize `CORS_ORIGINS=https://DOMINIO-FRONTEND` na API. Não inclua caminhos nem barra final; não use `*`. Se houver mais de uma origem autorizada, separe por vírgulas sem espaços.
 6. Configure as duas senhas de demonstração e `SEED_DEMO=true` na primeira implantação da API, para carregar explicitamente os dados fictícios na inicialização. Depois, pode voltar a `false`. Alternativamente, execute `python -m app.seed` no ambiente da API. O seed é idempotente e não troca senhas existentes. Nunca exponha senhas nas variáveis `VITE_*`.
-7. Configure um job diário no Railway executando `python -m app.retention`, com as mesmas variáveis e banco da API. Ele elimina relatos/eventos expirados, auditoria expirada, buckets e revogações temporários. Sem o job, os endpoints já ocultam relatos expirados, mas a exclusão física não ocorre.
+7. Mantenha `MAINTENANCE_ENABLED=true`: a API aplica a retenção ao iniciar e a cada hora, usando sessões independentes. Ela elimina relatos/eventos expirados, auditoria expirada, buckets e revogações temporários. O comando `python -m app.retention` continua disponível para execução manual. Quando a API estiver parada, a limpeza física aguarda sua inicialização; consultas sempre ocultam registros expirados.
 8. Valide no domínio HTTPS: criar denúncia fictícia → baixar acesso → consultar → entrar como socioemocional → atualizar → consultar → entrar como gestão → aplicar filtros. Configure monitoramento de disponibilidade sem capturar corpos ou dados de formulários.
 
 ### Variáveis da API
@@ -94,6 +96,7 @@ A versão atual do Railway usa `.railway/railway.ts`; os antigos `railway.json` 
 | `CORS_ORIGINS` | Domínio HTTPS exato do frontend |
 | `PRIVACY_THRESHOLD` | `5`, mínimo permitido; define as faixas e o limiar |
 | `RETENTION_DAYS` | `30`, ajustar conforme governança da demonstração |
+| `MAINTENANCE_ENABLED` | `true`: limpeza na inicialização e a cada hora, sem serviço extra |
 | `SUPPORT_NAME`, `SUPPORT_CONTACT` | Vazio até configuração de contato institucional autorizado |
 | `DEMO_STAFF_PASSWORD`, `DEMO_MANAGER_PASSWORD` | Senhas diferentes, pelo menos 12 caracteres, usadas somente no seed |
 | `PORT` | Definido pelo Railway; consumido pelo comando de inicialização |

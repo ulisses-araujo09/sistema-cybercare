@@ -55,6 +55,6 @@ API Railway: Root Directory `/backend`, conforme `.railway/railway.ts`. A inicia
 
 Frontend Railway: Root Directory `/frontend`, conforme `.railway/railway.ts`. Definir `VITE_API_URL` com a URL HTTPS pública da API antes do build. O Dockerfile recusa build sem essa configuração, evitando publicar um frontend sem conexão à API.
 
-O banco hospedado deve usar conexão PostgreSQL com `sslmode=require` ou verificação de certificado. `ENVIRONMENT=production`, `DEMO_MODE=true`, `JWT_SECRET` forte e `CORS_ORIGINS` com o domínio HTTPS exato do frontend são obrigatórios. Completar contatos institucionais e job diário de retenção conforme README.
+O banco hospedado deve usar conexão PostgreSQL com `sslmode=require` ou verificação de certificado. `ENVIRONMENT=production`, `DEMO_MODE=true`, `JWT_SECRET` forte e `CORS_ORIGINS` com o domínio HTTPS exato do frontend são obrigatórios. Completar os contatos institucionais. A retenção física agora é executada pela API ao iniciar e a cada hora, com `MAINTENANCE_ENABLED=true`.
 
 A infraestrutura atual é gerenciada por `railway config plan` / `railway config apply`, com o SDK instalado por `npm ci` na raiz. Os antigos arquivos `railway.json` foram substituídos, pois o Railway deixou de aceitá-los em novos serviços. A primeira implantação usa um snapshot limpo do commit via CLI. O autodeploy por GitHub depende de autorizar o GitHub App Railway para o repositório oficial; não é necessário para o upload via CLI.

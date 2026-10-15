@@ -58,9 +58,9 @@ Os quatro testes PWA (dois por dispositivo) usam o build servido em 4173, com se
 
 ## Dependências externas e limites da evidência
 
-**Não implantado no Railway e não conectado ao Neon nesta sessão.** Ainda dependem do responsável: contas, projeto Neon, `DATABASE_URL`, segredos, domínios HTTPS, CORS, seed hospedado, job de retenção e contatos institucionais. Não foram fornecidas credenciais externas.
+**Atualização: implantação realizada no Railway e conexão real ao Neon validada.** API e frontend concluíram os builds Docker e os health checks. As migrações criaram as tabelas no Neon e a carga fictícia foi executada. Os 12 testes de navegador passaram novamente nos domínios públicos, em 1,6 minuto. Os contatos institucionais continuam sem configuração e o autodeploy GitHub exige uma autorização separada do GitHub App Railway.
 
-Docker não está disponível neste ambiente. Os Dockerfiles e o Nginx foram preparados e revisados, mas as imagens não foram construídas nem executadas aqui. A integração foi validada com o servidor Vite e o Uvicorn locais. PostgreSQL precisa ser exercitado antes da gravação usando Neon ou Docker Compose e o roteiro do README.
+Docker não está disponível localmente, mas os dois Dockerfiles foram construídos e executados com sucesso no Railway. A integração completa foi exercitada com Nginx, FastAPI e PostgreSQL Neon. As capturas da validação pública estão em `docs/validacao-hospedagem/`. A infraestrutura foi atualizada para `.railway/railway.ts`, porque o Railway atual rejeita adoção de `railway.json` em novos serviços.
 
 Um aviso de depreciação transitivo do Starlette/AnyIO aparece nos testes Python, sem falhas. O executor do navegador emite aviso sobre `NO_COLOR`/`FORCE_COLOR`, sem efeito funcional.
 

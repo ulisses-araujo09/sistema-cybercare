@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test'
 import { readFileSync, mkdirSync } from 'node:fs'
 import type { Page } from '@playwright/test'
-const env = readFileSync('../backend/.env', 'utf8')
-function credential(key: string) { const result = env.match(new RegExp(`^${key}=(.+)$`, 'm')); if (!result) throw new Error(`Configure ${key} no ambiente local.`); return result[1].trim() }
+const env = process.env.DEMO_STAFF_PASSWORD && process.env.DEMO_MANAGER_PASSWORD ? '' : readFileSync('../backend/.env', 'utf8')
+const screenshots = process.env.CYBERCARE_SCREENSHOT_DIR || '../docs/validacao'
+function credential(key: string) { if (process.env[key]) return process.env[key]!; const result = env.match(new RegExp(`^${key}=(.+)$`, 'm')); if (!result) throw new Error(`Configure ${key} no ambiente local.`); return result[1].trim() }
 async function login(page: Page, role: 'socioemocional' | 'gestao') {
   await page.getByRole('link', { name: 'Acesso da escola', exact: true }).click()
   await page.getByLabel('E-mail institucional').fill(`${role}@demo.cybercare.local`)
@@ -59,13 +60,13 @@ test('denúncia persistida, chave única, consulta, gestão socioemocional e nov
 })
 
 test('telas públicas responsivas, quiz real e estados de erro', async ({ page }, info) => {
-  mkdirSync('../docs/validacao', { recursive: true })
+  mkdirSync(screenshots, { recursive: true })
   for (const route of ['/', '/denunciar', '/acompanhar', '/apoio', '/quiz', '/login', '/sobre']) {
     await page.goto(route)
     await expect(page.locator('h1')).toBeVisible()
     await expect(page.locator('.demo-notice')).toBeVisible()
     await noOverflow(page)
-    await page.screenshot({ path: `../docs/validacao/${route === '/' ? 'inicio' : route.slice(1)}-${info.project.name}.png`, fullPage: true })
+    await page.screenshot({ path: `${screenshots}/${route === '/' ? 'inicio' : route.slice(1)}-${info.project.name}.png`, fullPage: true })
   }
   await page.goto('/quiz')
   await expect(page.locator('.quiz-option').first()).toBeVisible()

@@ -3,6 +3,7 @@ import secrets
 os.environ['JWT_SECRET'] = secrets.token_urlsafe(48)
 os.environ['DATABASE_URL'] = 'sqlite://'
 os.environ['DEMO_MODE'] = 'true'
+os.environ['MAINTENANCE_ENABLED'] = 'false'
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool

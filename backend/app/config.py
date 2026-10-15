@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     cors_origins: str = 'http://localhost:5173,http://127.0.0.1:5173'
     privacy_threshold: int = 5
     retention_days: int = 30
+    maintenance_enabled: bool = True
     support_name: str = ''
     support_contact: str = ''
 
