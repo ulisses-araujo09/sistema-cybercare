@@ -1,0 +1,13 @@
+{
+  "name": "cybercare-infraestrutura",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "infra:plan": "railway config plan",
+    "infra:apply": "railway config apply"
+  },
+  "devDependencies": {
+    "railway": "^3.16.0"
+  }
+}

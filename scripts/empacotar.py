@@ -5,7 +5,7 @@ import hashlib
 
 root = Path(__file__).resolve().parents[1]
 directories = ['backend', 'frontend', 'docs', 'scripts', 'CyberCare_Codex', '.github']
-root_files = ['README.md', 'AGENTS.md', '.gitignore', '.gitattributes', 'docker-compose.yml', 'iniciar-demo.ps1']
+root_files = ['README.md', 'AGENTS.md', '.gitignore', '.gitattributes', 'docker-compose.yml', 'iniciar-demo.ps1', 'package.json', 'package-lock.json', '.railway/railway.ts', '.railway/README.md']
 excluded = {'node_modules', 'dist', '__pycache__', '.pytest_cache', 'test-results', 'playwright-report'}
 
 

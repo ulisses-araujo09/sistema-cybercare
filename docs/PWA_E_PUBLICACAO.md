@@ -51,8 +51,10 @@ O comando `scripts/publicar.ps1` realiza os dois envios e confere os hashes remo
 
 Criar o banco Neon e os dois serviços Railway **depois da publicação Git**, conforme a ordem definida pelo usuário. Não é preciso colocar credenciais no repositório.
 
-API Railway: Root Directory `/backend`, Config File `/backend/railway.json`. A inicialização `python -m app.start` valida o ambiente, aplica Alembic e inicia Uvicorn. Com `SEED_DEMO=true`, também carrega explicitamente as contas e os casos fictícios, usando as senhas configuradas nas variáveis privadas. Depois da primeira carga, `SEED_DEMO` pode voltar a `false`.
+API Railway: Root Directory `/backend`, conforme `.railway/railway.ts`. A inicialização `python -m app.start` valida o ambiente, aplica Alembic e inicia Uvicorn. Com `SEED_DEMO=true`, também carrega explicitamente as contas e os casos fictícios, usando as senhas configuradas nas variáveis privadas. Depois da primeira carga, `SEED_DEMO` pode voltar a `false`.
 
-Frontend Railway: Root Directory `/frontend`, Config File `/frontend/railway.json`. Definir `VITE_API_URL` com a URL HTTPS pública da API antes do build. O Dockerfile recusa build sem essa configuração, evitando publicar um frontend sem conexão à API.
+Frontend Railway: Root Directory `/frontend`, conforme `.railway/railway.ts`. Definir `VITE_API_URL` com a URL HTTPS pública da API antes do build. O Dockerfile recusa build sem essa configuração, evitando publicar um frontend sem conexão à API.
 
 O banco hospedado deve usar conexão PostgreSQL com `sslmode=require` ou verificação de certificado. `ENVIRONMENT=production`, `DEMO_MODE=true`, `JWT_SECRET` forte e `CORS_ORIGINS` com o domínio HTTPS exato do frontend são obrigatórios. Completar contatos institucionais e job diário de retenção conforme README.
+
+A infraestrutura atual é gerenciada por `railway config plan` / `railway config apply`, com o SDK instalado por `npm ci` na raiz. Os antigos arquivos `railway.json` foram substituídos, pois o Railway deixou de aceitá-los em novos serviços. A primeira implantação usa um snapshot limpo do commit via CLI. O autodeploy por GitHub depende de autorizar o GitHub App Railway para o repositório oficial; não é necessário para o upload via CLI.
