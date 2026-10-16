@@ -39,4 +39,4 @@ A primeira implantação foi feita via CLI. **Autodeploy por push GitHub ainda n
 
 ## Limites mantidos
 
-Ambiente exclusivamente demonstrativo. Não usar dados reais de estudantes. Anexos, notificações automáticas, chatbot, certificados e recuperação de chave permanecem fora do MVP. Contatos institucionais e governança para qualquer uso real dependem do responsável pela escola. Nenhum plano pago foi contratado ou alterado nesta implantação.
+Ambiente exclusivamente demonstrativo. Não usar dados reais de estudantes. Anexos, notificações automáticas, certificados e recuperação de chave permanecem fora do MVP. Contatos institucionais e governança para qualquer uso real dependem do responsável pela escola. Nenhum plano pago foi contratado ou alterado nesta implantação.

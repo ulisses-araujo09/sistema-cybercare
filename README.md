@@ -148,7 +148,7 @@ CyberCare_Codex/     referências originais preservadas
 
 ## Proteções e limites
 
-- Não há anexos, chatbot, triagem automática, recuperação de chave, certificados ou notificações automáticas. Consulta atualiza por solicitação do usuário.
+- Não há anexos, triagem automática, recuperação de chave, certificados ou notificações automáticas. Consulta atualiza por solicitação do usuário.
 - Nenhuma narrativa é enviada a serviços de IA ou analytics. A API não registra IP bruto nem conteúdo nos access logs; estes estão desativados. O limitador persiste HMAC de origem por janela de um minuto, com expiração de dois minutos e limpeza diária.
 - Uvicorn não confia automaticamente em headers de proxy. Assim, atrás do Railway, usuários podem compartilhar o limite do IP do proxy. É uma restrição conservadora aceitável para uma demonstração pequena; revisão de proxy confiável é necessária para escala.
 - Agregados em faixas e supressão complementar reduzem exposição. Filtros repetidos não fornecem uma garantia matemática de privacidade diferencial. Este painel é destinado exclusivamente a dados fictícios.
@@ -157,3 +157,8 @@ CyberCare_Codex/     referências originais preservadas
 - Hospedagem e conexão real ao Neon dependem das contas, credenciais e domínios externos. Consulte `docs/VALIDACAO.md` para o que foi efetivamente testado.
 
 O roteiro da apresentação está em `docs/ROTEIRO_VIDEO.md`.
+
+
+## Acessibilidade e assistente educativo
+
+Menu disponível em todas as páginas com oito ajustes de leitura, persistência local e suporte a teclado. Assistente público com base controlada, orientações sobre os fluxos e canais de ajuda. Não usa IA generativa, não consulta relatos e não grava conversas. Nenhum endpoint, chave de API ou variável de ambiente adicional é necessário. Consulte [a documentação das funcionalidades](docs/ACESSIBILIDADE_E_ASSISTENTE.md).

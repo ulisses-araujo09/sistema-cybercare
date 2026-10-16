@@ -66,4 +66,11 @@ Um aviso de depreciação transitivo do Starlette/AnyIO aparece nos testes Pytho
 
 Verificação automática de acessibilidade não certifica conformidade integral WCAG 2.2 AA. Não foram realizados testes com leitores de tela humanos, estudo com estudantes, auditoria independente, teste de carga ou validação científica de eficácia.
 
-Anexos, notificações automáticas, chatbot, certificados, recuperação de chave e gestão institucional de usuários não fazem parte desta entrega. O uso com dados reais permanece fora do escopo.
+Anexos, notificações automáticas, certificados, recuperação de chave e gestão institucional de usuários não fazem parte desta entrega. O uso com dados reais permanece fora do escopo.
+
+
+## Melhorias de acessibilidade e assistente — 16/10/2026
+
+Build TypeScript/Vite/PWA concluído. API: 10 testes passaram. Navegador: 12 testes existentes e 12 novos passaram em computador e celular, incluindo os dois perfis escolares, persistência/restauração, Escape e retorno de foco, fonte de 200% com espaçamento sem transbordamento nas sete telas públicas, temas, perguntas solicitadas, recusa de assuntos fora do escopo e canais de ajuda. As verificações axe não encontraram violações nos cenários cobertos. Nenhum endpoint ou variável nova. Conversas não geram requisições POST e não são salvas no armazenamento do navegador. Cache PWA continua restrito aos recursos estáticos.
+
+A verificação não substitui avaliação humana com leitores de tela. A base determinística pode não compreender variações de linguagem; as sugestões permitem selecionar os assuntos diretamente.

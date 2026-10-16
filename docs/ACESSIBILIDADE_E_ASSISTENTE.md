@@ -1,0 +1,15 @@
+# Acessibilidade e assistente educativo
+
+O botão Acessibilidade está disponível em todas as rotas. Permite modo escuro, alto contraste (prioritário), fonte entre 100% e 200%, sublinhado, espaçamento, redução de movimentos e fonte Verdana. As escolhas ficam na chave local `cybercare.acessibilidade.v1`, validada ao carregar; restaurar remove essa chave. A preferência do dispositivo por movimento reduzido continua válida. Falhas de armazenamento não impedem o uso. O painel modal usa dialog nativo, foco contido, Escape e fechamento explícito. Os botões ficam separados e há espaço reservado ao final da página.
+
+O assistente usa uma base educativa local e determinística em `frontend/src/educational.ts`, sem modelo generativo, credenciais externas, chamadas de chat à API ou persistência de conversas. As respostas são orientações gerais: não fazem diagnóstico nem atendimento. Não acessa relatos, usuários ou banco. Histórico limitado a dez interações na memória, apagado ao fechar ou mudar de rota. Perguntas fora do escopo recebem orientação para os temas disponíveis. Nunca oferece consulta de casos pelo chat. Não está disponível em login, painéis escolares ou na tela que exibe a chave privada.
+
+As correspondências por palavras são limitadas: perguntas ambíguas podem exigir selecionar uma sugestão. Novas respostas devem passar por revisão pedagógica; não apresentar este recurso como terapia ou inteligência artificial generativa. Não inserir dados pessoais nos exemplos. Contatos da escola continuam na página de apoio, usando a configuração existente da API.
+
+Referências: [UNICEF — Cyberbullying](https://www.unicef.org/brazil/cyberbullying-o-que-eh-e-como-para-lo), [W3C — dialog nativo](https://www.w3.org/WAI/WCAG22/Techniques/html/H102). Testes automatizados ajudam a identificar problemas, mas não certificam conformidade integral às WCAG; manter avaliação humana com tecnologias assistivas.
+
+## Canais e arquitetura
+
+A base cobre as 18 perguntas definidas para o MVP, incluindo diferença entre bullying e cyberbullying, anonimato sem garantia absoluta, protocolo, papéis escolares e canais de ajuda. O componente inclui boas-vindas, sugestões, estado de preparação da resposta e ações de limpar/fechar. A lista de canais distingue Disque 100, Polícia Militar 190, SAMU 192 e CVV 188. Os links de fonte aparecem junto das orientações. Fontes consultadas em 16/10/2026: [Disque 100](https://www.gov.br/pt-br/servicos/denunciar-violacao-de-direitos-humanos), [Anatel](https://www.gov.br/anatel/pt-br/regulado/numeracao/codigos-nacionais/servicos-de-utilidade-publica-e-de-emergencia), [SAMU](https://www.gov.br/saude/pt-br/composicao/saes/samu-192) e serviço de consulta de canais locais para o CVV.
+
+A arquitetura existente FastAPI permanece intacta. Como as respostas não precisam consultar dados do servidor, a base estática é entregue com o frontend: nenhum endpoint, migração ou variável de ambiente nova. Isso evita encaminhar mensagens para o backend ou terceiros. Somente os formulários existentes podem registrar e consultar denúncias com as validações e permissões já implementadas.
